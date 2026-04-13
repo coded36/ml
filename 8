@@ -1,0 +1,49 @@
+import pylab as pl
+import numpy as np
+from sklearn.cluster import KMeans
+
+# For reproducibility
+np.random.seed(110)
+
+# Set parameters
+red_mean = 3
+red_std = 0.8
+blue_mean = 7
+blue_std = 1
+
+# Generate data
+red = np.random.normal(red_mean, red_std, size=40)
+blue = np.random.normal(blue_mean, blue_std, size=40)
+
+both_colours = np.sort(np.concatenate((red, blue)))
+
+# Dummy y-axis (for visualization)
+y = np.zeros(len(both_colours))
+
+# Apply KMeans with k=2
+kmeans_model = KMeans(n_clusters=2, random_state=42)
+kmeansoutput = kmeans_model.fit(both_colours.reshape(-1, 1))
+
+# -------- Elbow Method --------
+Nc = range(1, 6)
+kmeans_models = [KMeans(n_clusters=i, random_state=42) for i in Nc]
+
+# Use inertia instead of score
+inertia_values = [
+    model.fit(both_colours.reshape(-1, 1)).inertia_
+    for model in kmeans_models
+]
+
+# Plot elbow curve
+pl.plot(Nc, inertia_values, marker='o')
+pl.xlabel('Number of Clusters (k)')
+pl.ylabel('Inertia')
+pl.title('Elbow Curve')
+pl.show()
+
+# -------- Plot Clusters --------
+pl.scatter(both_colours, y, c=kmeansoutput.labels_)
+pl.xlabel('Data points')
+pl.ylabel('Dummy axis')
+pl.title('K-Means Clustering (k=2)')
+pl.show()
