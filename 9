@@ -1,0 +1,40 @@
+from sklearn.datasets import load_iris
+
+# 1. Load dataset
+iris = load_iris()
+
+print("Feature Names:", iris.feature_names)
+print("Iris Data:\n", iris.data)
+print("Target Names:", iris.target_names)
+print("Target:\n", iris.target)
+
+# 2. Split the data into training and testing
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    iris.data, iris.target, test_size=0.25, random_state=42
+)
+
+# 3. Build the model
+from sklearn.neighbors import KNeighborsClassifier
+
+clf = KNeighborsClassifier(n_neighbors=3)   # you can change k value
+clf.fit(X_train, y_train)
+
+# 4. Calculate accuracy
+print("Accuracy =", clf.score(X_test, y_test))
+
+# 5. Predictions
+print("\nPredicted Data:")
+prediction = clf.predict(X_test)
+print(prediction)
+
+print("\nActual Test Data:")
+print(y_test)
+
+# 6. Identify misclassifications
+diff = prediction - y_test
+print("\nDifference (Prediction - Actual):")
+print(diff)
+
+print("\nTotal no of samples misclassified =", sum(abs(diff)))
